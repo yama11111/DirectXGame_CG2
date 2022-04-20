@@ -330,12 +330,28 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	// 頂点レイアウト
 	D3D12_INPUT_ELEMENT_DESC inputLayout[] =
 	{
+		
+		//{
+		//	 セマンティック名,
+		//	 複数同じセマンティック名がある場合に使うインデックス (0 でいい),
+		//	 要素数とビット数を返す (float XYZ(3つ) -> R32G32B32_FLOAT),
+		//	 *入力スロットインデックス (0 でいい),
+		//	 データのオフセット値 (D3D12_APPEND_ALIGNED_ELEMENT だと自動),
+		//	 *入力データ種別 (標準は D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA),
+		//	 *一度に描画するインスタンス数 (0 でいい)
+		//}
+
 		{
-			"POSITION", 0,
-			DXGI_FORMAT_R32G32B32_FLOAT, 0,
-			D3D12_APPEND_ALIGNED_ELEMENT,
-			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
+			"POSITION", 
+			0, 
+			DXGI_FORMAT_R32G32B32_FLOAT, 
+			0, 
+			D3D12_APPEND_ALIGNED_ELEMENT, 
+			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 
+			0 
 		}, // (1行で書いたほうが見やすい)
+
+		// 座標以外を渡す場合はさらに続ける
 	};
 
 	// グラフィックスパイプライン設定
