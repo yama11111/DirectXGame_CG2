@@ -395,6 +395,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	// ラスタライザの設定
 	pipelineDesc.RasterizerState.CullMode = D3D12_CULL_MODE_NONE; // カリングしない
 	pipelineDesc.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID; // ポリゴン内塗りつぶし
+	//pipelineDesc.RasterizerState.FillMode = D3D12_FILL_MODE_WIREFRAME; // ワイヤーフレーム
 	pipelineDesc.RasterizerState.DepthClipEnable = true; // 深度クリッピングを有効に
 
 	// ブレンドステート
@@ -496,21 +497,21 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		// --- 4.描画コマンド --- //
 		// ビューポート設定コマンド
 		D3D12_VIEWPORT viewport{};
-		viewport.Width = window_width;
-		viewport.Height = window_height;
-		viewport.TopLeftX = 0;
-		viewport.TopLeftY = 0;
-		viewport.MinDepth = 0.0f;
-		viewport.MaxDepth = 1.0f;
+		viewport.Width = window_width; // 横幅
+		viewport.Height = window_height; // 縦幅
+		viewport.TopLeftX = 0; // 左上 X
+		viewport.TopLeftY = 0; // 左上 Y
+		viewport.MinDepth = 0.0f; // 縮小深度 (0 でいい)
+		viewport.MaxDepth = 1.0f; // 拡大深度 (1 でいい)
 		// ビューポート設定コマンドを、コマンドリストに積む
 		commandList->RSSetViewports(1, &viewport);
 
 		// シザー矩形
 		D3D12_RECT scissorRect{};
-		scissorRect.left = 0; // 切り抜き座標左
-		scissorRect.right = scissorRect.left + window_width; // 切り抜き座標右
-		scissorRect.top = 0; // 切り抜き座標上
-		scissorRect.bottom = scissorRect.top + window_height; // 切り抜き座標下
+		scissorRect.left = 0; // 切り抜き座標 左
+		scissorRect.right = scissorRect.left + window_width; // 切り抜き座標 右
+		scissorRect.top = 0; // 切り抜き座標 上
+		scissorRect.bottom = scissorRect.top + window_height; // 切り抜き座標 下
 		// シザー矩形設定コマンドを、コマンドリストに積む
 		commandList->RSSetScissorRects(1, &scissorRect);
 
