@@ -247,20 +247,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 	// ------- 描画初期化処理 ------- //
 	// 頂点データ
-	//XMFLOAT3 vertices[] =
-	//{
-	//	{ -0.5f, -0.5f, 0.0f }, // 左下
-	//	{ -0.5f, +0.5f, 0.0f }, // 左上
-	//	{ +0.5f, -0.5f, 0.0f }, // 右下
-	//};
 	XMFLOAT3 vertices[] =
 	{
 		{ -0.5f, -0.5f, 0.0f }, // 左下
 		{ -0.5f, +0.5f, 0.0f }, // 左上
 		{ +0.5f, -0.5f, 0.0f }, // 右下
-		{ +0.5f, +0.5f, 0.0f }, // 右上
 	};
-
 	// 頂点データ全体のサイズ = 頂点データ一つ分のサイズ * 頂点データの要素数
 	UINT sizeVB = static_cast<UINT>(sizeof(XMFLOAT3) * _countof(vertices));
 
@@ -364,7 +356,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	// 頂点レイアウト
 	D3D12_INPUT_ELEMENT_DESC inputLayout[] =
 	{
-		
+
 		//{
 		//	 セマンティック名,
 		//	 複数同じセマンティック名がある場合に使うインデックス (0 でいい),
@@ -376,13 +368,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		//}
 
 		{
-			"POSITION", 
-			0, 
-			DXGI_FORMAT_R32G32B32_FLOAT, 
-			0, 
-			D3D12_APPEND_ALIGNED_ELEMENT, 
-			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 
-			0 
+			"POSITION",
+			0,
+			DXGI_FORMAT_R32G32B32_FLOAT,
+			0,
+			D3D12_APPEND_ALIGNED_ELEMENT,
+			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
+			0
 		}, // (1行で書いたほうが見やすい)
 
 		// 座標以外を渡す場合はさらに続ける
@@ -446,12 +438,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 	// ------------------------------ //
 
-	bool flag1 = false;
-	bool flag2 = false;
-
-	BYTE key[256] = {};
-	BYTE oldkey[256] = {};
-
 	// ゲームループ
 	while (true)
 	{
@@ -474,41 +460,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		keyboard->Acquire();
 
 		// 全キーの入力状態を取得する
-		//BYTE key[256] = {};
-		for (size_t i = 0; i < 255; i++)
-		{
-			oldkey[i] = key[i];
-		}
+		BYTE key[256] = {};
 		keyboard->GetDeviceState(sizeof(key), key);
 
 		// 数字の 0キー 押していたら
 		if (key[DIK_0])
 		{
 			OutputDebugStringA("Hit 0\n");
-		}
-
-		if (key[DIK_1] && !oldkey[DIK_1])
-		{
-			if (flag1) { flag1 = false; }
-			else { flag1 = true; }
-		}
-		if (key[DIK_2] && !oldkey[DIK_2])
-		{
-			if (flag2) { flag2 = false; }
-			else { flag2 = true; }
-		}
-		
-		if (flag2)
-		{
-			pipelineDesc.RasterizerState.FillMode = D3D12_FILL_MODE_WIREFRAME;
-			result = device->CreateGraphicsPipelineState(&pipelineDesc, IID_PPV_ARGS(&pipelineState));
-			assert(SUCCEEDED(result));
-		}
-		else
-		{
-			pipelineDesc.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
-			result = device->CreateGraphicsPipelineState(&pipelineDesc, IID_PPV_ARGS(&pipelineState));
-			assert(SUCCEEDED(result));
 		}
 
 		// バックバッファの番号を取得(2つなので0番か1番)
@@ -531,41 +489,22 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		// 数字の スペースキー 押していたら
 		if (key[DIK_SPACE])
 		{
-			clearColor[0] = 1.0f;
-			clearColor[1] = 105.0f / 255.0f;
-			clearColor[2] = 180.0f / 255.0f;
+			clearColor[1] = 0.5f;
 		}
 		commandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
 
 
 		// --- 4.描画コマンド --- //
 		// ビューポート設定コマンド
-		D3D12_VIEWPORT viewport[4]{};
-		viewport[0].Width = window_width * (2.0f / 3.0f); // 横幅
-		viewport[0].Height = window_height * (2.0f / 3.0f); // 縦幅
-		viewport[0].TopLeftX = 0; // 左上 X
-		viewport[0].TopLeftY = 0; // 左上 Y
-
-		viewport[1].Width = window_width - viewport[0].Width; // 横幅
-		viewport[1].Height = window_height * (2.0f / 3.0f); // 縦幅
-		viewport[1].TopLeftX = viewport[0].Width; // 左上 X
-		viewport[1].TopLeftY = 0; // 左上 Y
-
-		viewport[2].Width = window_width * (2.0f / 3.0f); // 横幅
-		viewport[2].Height = window_height - viewport[0].Height; // 縦幅
-		viewport[2].TopLeftX = 0; // 左上 X
-		viewport[2].TopLeftY = viewport[0].Height; // 左上 Y
-
-		viewport[3].Width = window_width - viewport[0].Width; // 横幅
-		viewport[3].Height = window_height - viewport[0].Height; // 縦幅
-		viewport[3].TopLeftX = viewport[0].Width; // 左上 X
-		viewport[3].TopLeftY = viewport[0].Height; // 左上 Y
-
-		for (int i = 0; i < 4; i++)
-		{
-			viewport[i].MinDepth = 0.0f; // 縮小深度 (0 でいい)
-			viewport[i].MaxDepth = 1.0f; // 拡大深度 (1 でいい)
-		}
+		D3D12_VIEWPORT viewport{};
+		viewport.Width = window_width; // 横幅
+		viewport.Height = window_height; // 縦幅
+		viewport.TopLeftX = 0; // 左上 X
+		viewport.TopLeftY = 0; // 左上 Y
+		viewport.MinDepth = 0.0f; // 縮小深度 (0 でいい)
+		viewport.MaxDepth = 1.0f; // 拡大深度 (1 でいい)
+		// ビューポート設定コマンドを、コマンドリストに積む
+		commandList->RSSetViewports(1, &viewport);
 
 		// シザー矩形
 		D3D12_RECT scissorRect{};
@@ -581,24 +520,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		commandList->SetGraphicsRootSignature(rootSignature);
 
 		// プリミティブ形状の設定コマンド
-		if (flag1) 
-		{
-			commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST); // 三角形リスト
-		}
-		else
-		{
-			commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
-		}
+		commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST); // 三角形リスト
 
 		// 頂点バッファビューの設定コマンド
 		commandList->IASetVertexBuffers(0, 1, &vbView);
 
 		// 描画コマンド
-		for (int i = 0; i < 4; i++)
-		{
-			commandList->RSSetViewports(4, &viewport[i]);
-			commandList->DrawInstanced(_countof(vertices), 1, 0, 0); // 全ての頂点を使って描画
-		}
+		commandList->DrawInstanced(_countof(vertices), 1, 0, 0); // 全ての頂点を使って描画
 
 		// ---------------------- //
 

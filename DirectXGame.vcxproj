@@ -139,7 +139,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="MyDXAdapters.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MyDirectX.cpp" />
+    <ClCompile Include="MyDXCommandList.cpp" />
+    <ClCompile Include="MyDXCommandQueue.cpp" />
+    <ClCompile Include="MyDXDevice.cpp" />
+    <ClCompile Include="MyDXRenderTargetView.cpp" />
+    <ClCompile Include="MyDXSwapChain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="BasicPS.hlsl">
@@ -154,6 +161,15 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="MyDXAdapters.h" />
+    <ClInclude Include="MyDirectX.h" />
+    <ClInclude Include="MyDXCommandList.h" />
+    <ClInclude Include="MyDXCommandQueue.h" />
+    <ClInclude Include="MyDXDevice.h" />
+    <ClInclude Include="MyDXRenderTargetView.h" />
+    <ClInclude Include="MyDXSwapChain.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
