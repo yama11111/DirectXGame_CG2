@@ -244,25 +244,22 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 
 	// ------------------------------ //
-	
-	bool flag1 = false;
-	bool flag2 = false;
 
 	// ------- 描画初期化処理 ------- //
 	// 頂点データ
-	XMFLOAT3 vertices[] =
-	{
-		{ -0.5f, -0.5f, 0.0f }, // 左下
-		{ -0.5f, +0.5f, 0.0f }, // 左上
-		{ +0.5f, -0.5f, 0.0f }, // 右下
-	};
 	//XMFLOAT3 vertices[] =
 	//{
 	//	{ -0.5f, -0.5f, 0.0f }, // 左下
 	//	{ -0.5f, +0.5f, 0.0f }, // 左上
 	//	{ +0.5f, -0.5f, 0.0f }, // 右下
-	//	{ +0.5f, +0.5f, 0.0f }, // 右上
 	//};
+	XMFLOAT3 vertices[] =
+	{
+		{ -0.5f, -0.5f, 0.0f }, // 左下
+		{ -0.5f, +0.5f, 0.0f }, // 左上
+		{ +0.5f, -0.5f, 0.0f }, // 右下
+		{ +0.5f, +0.5f, 0.0f }, // 右上
+	};
 
 	// 頂点データ全体のサイズ = 頂点データ一つ分のサイズ * 頂点データの要素数
 	UINT sizeVB = static_cast<UINT>(sizeof(XMFLOAT3) * _countof(vertices));
@@ -449,6 +446,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 	// ------------------------------ //
 
+	bool flag1 = false;
+	bool flag2 = false;
+
+	BYTE key[256] = {};
+	BYTE oldkey[256] = {};
+
 	// ゲームループ
 	while (true)
 	{
@@ -471,7 +474,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		keyboard->Acquire();
 
 		// 全キーの入力状態を取得する
-		BYTE key[256] = {};
+		//BYTE key[256] = {};
+		for (size_t i = 0; i < 255; i++)
+		{
+			oldkey[i] = key[i];
+		}
 		keyboard->GetDeviceState(sizeof(key), key);
 
 		// 数字の 0キー 押していたら
@@ -480,17 +487,30 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 			OutputDebugStringA("Hit 0\n");
 		}
 
-		if (key[DIK_1])
+		if (key[DIK_1] && !oldkey[DIK_1])
 		{
 			if (flag1) { flag1 = false; }
 			else { flag1 = true; }
 		}
-		if (key[DIK_2])
+		if (key[DIK_2] && !oldkey[DIK_2])
 		{
 			if (flag2) { flag2 = false; }
 			else { flag2 = true; }
 		}
 		
+		if (flag2)
+		{
+			pipelineDesc.RasterizerState.FillMode = D3D12_FILL_MODE_WIREFRAME;
+			result = device->CreateGraphicsPipelineState(&pipelineDesc, IID_PPV_ARGS(&pipelineState));
+			assert(SUCCEEDED(result));
+		}
+		else
+		{
+			pipelineDesc.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
+			result = device->CreateGraphicsPipelineState(&pipelineDesc, IID_PPV_ARGS(&pipelineState));
+			assert(SUCCEEDED(result));
+		}
+
 		// バックバッファの番号を取得(2つなので0番か1番)
 		UINT bbIndex = swapChain->GetCurrentBackBufferIndex();
 		// 1.リソースバリアで書き込み可能に変更
@@ -561,7 +581,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		commandList->SetGraphicsRootSignature(rootSignature);
 
 		// プリミティブ形状の設定コマンド
-		commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST); // 三角形リスト
+		if (flag1) 
+		{
+			commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST); // 三角形リスト
+		}
+		else
+		{
+			commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+		}
 
 		// 頂点バッファビューの設定コマンド
 		commandList->IASetVertexBuffers(0, 1, &vbView);
@@ -570,14 +597,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		for (int i = 0; i < 4; i++)
 		{
 			commandList->RSSetViewports(4, &viewport[i]);
-			if (flag1)
-			{
-				commandList->DrawInstanced(_countof(vertices), 1, 0, 0); // 全ての頂点を使って描画
-			}
-			else
-			{
-				commandList->DrawInstanced(_countof(vertices), 1, 0, 0); // 全ての頂点を使って描画
-			}
+			commandList->DrawInstanced(_countof(vertices), 1, 0, 0); // 全ての頂点を使って描画
 		}
 
 		// ---------------------- //
