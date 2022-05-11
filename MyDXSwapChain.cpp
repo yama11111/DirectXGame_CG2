@@ -1,6 +1,29 @@
 #include "MyDXSwapChain.h"
+#include "Result.h"
 
-void MyDXSwapChain::Init()
+void MyDXSwapChain::Init(ID3D12CommandQueue* commandQueue, IDXGIFactory7* dxgiFactory, const HWND& hwnd)
+{
+	Set();
+	Create(commandQueue, dxgiFactory, hwnd);
+}
+
+IDXGISwapChain4* MyDXSwapChain::SwapChain()
+{
+	return swapChain;
+}
+
+DXGI_SWAP_CHAIN_DESC1 MyDXSwapChain::SwapChainDesc()
+{
+	return swapChainDesc;
+}
+
+void MyDXSwapChain::FlipBuffer()
+{
+	// 画面に表示するバッファをフリップ(裏表の入替え)
+	Result(swapChain->Present(1, 0));
+}
+
+void MyDXSwapChain::Set()
 {
 	swapChainDesc.Width = 1280;
 	swapChainDesc.Height = 720;
@@ -12,12 +35,10 @@ void MyDXSwapChain::Init()
 	swapChainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 }
 
-void MyDXSwapChain::Create(ID3D12CommandQueue*& commandQueue, IDXGIFactory7*& dxgiFactory, HWND& hwnd)
+void MyDXSwapChain::Create(ID3D12CommandQueue* commandQueue, IDXGIFactory7* dxgiFactory, const HWND& hwnd)
 {
-	HRESULT result;
 	// スワップチェーン生成
-	result = dxgiFactory->CreateSwapChainForHwnd(
+	Result(dxgiFactory->CreateSwapChainForHwnd(
 		commandQueue, hwnd, &swapChainDesc, nullptr, nullptr,
-		(IDXGISwapChain1**)&swapChain);
-	assert(SUCCEEDED(result));
+		(IDXGISwapChain1**)&swapChain));
 }

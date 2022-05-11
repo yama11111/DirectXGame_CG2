@@ -1,13 +1,26 @@
 #include "MyDXAdapters.h"
-#include <cassert>
+#include "Result.h"
 
-void MyDXAdapters::List(IDXGIFactory7*& dxgiFactory)
+void MyDXAdapters::Init()
 {
-	HRESULT result;
-	// DXGIファクトリー生成
-	result = CreateDXGIFactory(IID_PPV_ARGS(&dxgiFactory));
-	assert(SUCCEEDED(result));
+	List();
+	Select();
+}
 
+IDXGIAdapter4* MyDXAdapters::Template()
+{
+	return tmpAdapter;
+}
+
+IDXGIFactory7* MyDXAdapters::Factory()
+{
+	return dxgiFactory;
+}
+
+void MyDXAdapters::List()
+{
+	// DXGIファクトリー生成
+	Result(CreateDXGIFactory(IID_PPV_ARGS(&dxgiFactory)));
 
 	// パフォーマンスが高いものから順に、全てのアダプターを列挙
 	for (UINT i = 0;

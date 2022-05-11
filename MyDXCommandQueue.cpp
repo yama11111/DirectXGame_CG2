@@ -1,9 +1,21 @@
 #include "MyDXCommandQueue.h"
+#include "Result.h"
 
-void MyDXCommandQueue::Create(ID3D12Device*& device)
+void MyDXCommandQueue::Init(ID3D12Device* device)
 {
-	HRESULT result;
+	if (device == nullptr) return;
 	//コマンドキュー生成
-	result = device->CreateCommandQueue(&commandQueueDesc, IID_PPV_ARGS(&commandQueue));
-	assert(SUCCEEDED(result));
+	Result(device->CreateCommandQueue(&commandQueueDesc, IID_PPV_ARGS(&commandQueue)));
+}
+
+ID3D12CommandQueue* MyDXCommandQueue::CommandQueue()
+{
+	return commandQueue;
+}
+
+void MyDXCommandQueue::ExeCommmand(const int ary, ID3D12CommandList* commandList)
+{
+	// コマンドリスト実行
+	ID3D12CommandList* commandLists[] = { commandList };
+	commandQueue->ExecuteCommandLists(ary, commandLists);
 }

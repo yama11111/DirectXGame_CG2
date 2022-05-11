@@ -1,7 +1,6 @@
 #pragma once
 #include <d3d12.h>
 #include <dxgi1_6.h>
-#include <cassert>
 
 #pragma comment(lib, "d3d12.lib")
 #pragma comment(lib, "dxgi.lib")
@@ -10,6 +9,7 @@ class MyDXDevice
 {
 private:
 	ID3D12Device* device = nullptr;
+
 	// ‘Î‰žƒŒƒxƒ‹‚Ì”z—ñ
 	D3D_FEATURE_LEVEL levels[4] =
 	{
@@ -20,8 +20,7 @@ private:
 	};
 	D3D_FEATURE_LEVEL featureLevel;
 public:
-	MyDXDevice();
-	~MyDXDevice();
-	void Create(IDXGIAdapter4*& tmpAdapter);
+	void Init(IDXGIAdapter4* tmpAdapter);
+	ID3D12Device* Device();
 };
 

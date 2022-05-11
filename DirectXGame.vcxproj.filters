@@ -13,31 +13,58 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="ソース ファイル\MyDX">
+      <UniqueIdentifier>{d2e5c917-5da9-43d2-90ff-0d3422aec358}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\MyDX">
+      <UniqueIdentifier>{b9e1c3af-3d73-42f0-9e13-015d3bf689ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\MyDX\Init">
+      <UniqueIdentifier>{5978ef30-b9e7-481b-bf13-a82c0ef4c8f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\MyDX\Init">
+      <UniqueIdentifier>{e7cc4156-d7d6-48bf-8fb1-5e5535282d4e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\MyDX\Update">
+      <UniqueIdentifier>{36f43a14-7d05-407c-83ce-7a50991d9546}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\MyDX\Update">
+      <UniqueIdentifier>{3eb05a70-5ca6-45d3-bf9b-5455703c4cff}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Result.cpp">
+      <Filter>ソース ファイル\MyDX</Filter>
+    </ClCompile>
     <ClCompile Include="MyDirectX.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>ソース ファイル\MyDX</Filter>
     </ClCompile>
     <ClCompile Include="MyDXAdapters.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="MyDXDevice.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>ソース ファイル\MyDX\Init</Filter>
     </ClCompile>
     <ClCompile Include="MyDXCommandList.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>ソース ファイル\MyDX\Init</Filter>
     </ClCompile>
     <ClCompile Include="MyDXCommandQueue.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>ソース ファイル\MyDX\Init</Filter>
     </ClCompile>
-    <ClCompile Include="MyDXSwapChain.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="MyDXDevice.cpp">
+      <Filter>ソース ファイル\MyDX\Init</Filter>
+    </ClCompile>
+    <ClCompile Include="MyDXFence.cpp">
+      <Filter>ソース ファイル\MyDX\Init</Filter>
     </ClCompile>
     <ClCompile Include="MyDXRenderTargetView.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>ソース ファイル\MyDX\Init</Filter>
+    </ClCompile>
+    <ClCompile Include="MyDXSwapChain.cpp">
+      <Filter>ソース ファイル\MyDX\Init</Filter>
+    </ClCompile>
+    <ClCompile Include="MyDXResourceBarrier.cpp">
+      <Filter>ソース ファイル\MyDX\Update</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -45,26 +72,35 @@
     <FxCompile Include="BasicPS.hlsl" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Result.h">
+      <Filter>ヘッダー ファイル\MyDX</Filter>
+    </ClInclude>
     <ClInclude Include="MyDirectX.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>ヘッダー ファイル\MyDX</Filter>
     </ClInclude>
     <ClInclude Include="MyDXAdapters.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="MyDXDevice.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>ヘッダー ファイル\MyDX\Init</Filter>
     </ClInclude>
     <ClInclude Include="MyDXCommandList.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>ヘッダー ファイル\MyDX\Init</Filter>
     </ClInclude>
     <ClInclude Include="MyDXCommandQueue.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>ヘッダー ファイル\MyDX\Init</Filter>
     </ClInclude>
-    <ClInclude Include="MyDXSwapChain.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="MyDXDevice.h">
+      <Filter>ヘッダー ファイル\MyDX\Init</Filter>
+    </ClInclude>
+    <ClInclude Include="MyDXFence.h">
+      <Filter>ヘッダー ファイル\MyDX\Init</Filter>
     </ClInclude>
     <ClInclude Include="MyDXRenderTargetView.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>ヘッダー ファイル\MyDX\Init</Filter>
+    </ClInclude>
+    <ClInclude Include="MyDXSwapChain.h">
+      <Filter>ヘッダー ファイル\MyDX\Init</Filter>
+    </ClInclude>
+    <ClInclude Include="MyDXResourceBarrier.h">
+      <Filter>ヘッダー ファイル\MyDX\Update</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

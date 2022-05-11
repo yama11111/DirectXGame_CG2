@@ -1,7 +1,6 @@
 #pragma once
 #include <d3d12.h>
 #include <dxgi1_6.h>
-#include <cassert>
 
 #pragma comment(lib, "d3d12.lib")
 #pragma comment(lib, "dxgi.lib")
@@ -13,10 +12,12 @@ private:
 	// スワップチェーン設定
 	DXGI_SWAP_CHAIN_DESC1 swapChainDesc{};
 public:
-	MyDXSwapChain();
-	~MyDXSwapChain();
-	void Init();
+	void Init(ID3D12CommandQueue* commandQueue, IDXGIFactory7* dxgiFactory, const HWND& hwnd);
+	IDXGISwapChain4* SwapChain();
+	DXGI_SWAP_CHAIN_DESC1 SwapChainDesc();
+	void FlipBuffer();
 private:
-	void Create(ID3D12CommandQueue*& commandQueue, IDXGIFactory7*& dxgiFactory, HWND& hwnd);
+	void Set();
+	void Create(ID3D12CommandQueue* commandQueue, IDXGIFactory7* dxgiFactory, const HWND& hwnd);
 };
 
