@@ -31,7 +31,7 @@ void MyDirectX::PreDraw()
 	myCmdList.CommandList()->OMSetRenderTargets(1, &rtvHandle, false, nullptr);
 
 	// 3.画面クリア {R, G, B, A}
-	myCmdList.ClearScreen(rtvHandle, { 1.0f, 1.0f, 1.0f, 1.0f }); // 青っぽい色
+	myCmdList.ClearScreen(rtvHandle, { 0.1f, 0.25f, 0.5f, 0.0f }); // 青っぽい色
 }
 
 void MyDirectX::PostDraw()
@@ -52,4 +52,15 @@ void MyDirectX::PostDraw()
 	// 再びコマンドリストを貯める準備
 	myCmdList.PreStore();
 
+}
+
+void MyDirectX::EnableDebugLayer()
+{
+#ifdef _DEBUG
+	//デバッグレイヤーをオンに
+	if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController))))
+	{
+		debugController->EnableDebugLayer();
+	}
+#endif
 }

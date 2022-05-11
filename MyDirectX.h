@@ -21,11 +21,13 @@ public:
 
 	MyDXResourceBarrier myRscBarrier;
 
+	ID3D12Debug* debugController;
 public:
 	MyDirectX();
 	~MyDirectX();
 	void Init(const HWND& hwnd);
 	void PreDraw();
 	void PostDraw();
+	void EnableDebugLayer();
 };
 

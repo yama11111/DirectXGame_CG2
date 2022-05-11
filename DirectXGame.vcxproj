@@ -139,6 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Component.cpp" />
     <ClCompile Include="MyDXAdapters.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MyDirectX.cpp" />
@@ -149,7 +150,9 @@
     <ClCompile Include="MyDXRenderTargetView.cpp" />
     <ClCompile Include="MyDXResourceBarrier.cpp" />
     <ClCompile Include="MyDXSwapChain.cpp" />
+    <ClCompile Include="MyWIndowsApplication.cpp" />
     <ClCompile Include="Result.cpp" />
+    <ClCompile Include="Vec2.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="BasicPS.hlsl">
@@ -166,6 +169,7 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Component.h" />
     <ClInclude Include="MyDXAdapters.h" />
     <ClInclude Include="MyDirectX.h" />
     <ClInclude Include="MyDXCommandList.h" />
@@ -175,7 +179,9 @@
     <ClInclude Include="MyDXRenderTargetView.h" />
     <ClInclude Include="MyDXResourceBarrier.h" />
     <ClInclude Include="MyDXSwapChain.h" />
+    <ClInclude Include="MyWIndowsApplication.h" />
     <ClInclude Include="Result.h" />
+    <ClInclude Include="Vec2.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

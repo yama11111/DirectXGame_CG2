@@ -66,6 +66,15 @@
     <ClCompile Include="MyDXResourceBarrier.cpp">
       <Filter>ソース ファイル\MyDX\Update</Filter>
     </ClCompile>
+    <ClCompile Include="MyWIndowsApplication.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Vec2.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Component.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="BasicVS.hlsl" />
@@ -101,6 +110,15 @@
     </ClInclude>
     <ClInclude Include="MyDXResourceBarrier.h">
       <Filter>ヘッダー ファイル\MyDX\Update</Filter>
+    </ClInclude>
+    <ClInclude Include="MyWIndowsApplication.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Vec2.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Component.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
