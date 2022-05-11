@@ -388,8 +388,35 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	pipelineDesc.RasterizerState.DepthClipEnable = true; // 深度クリッピングを有効に
 
 	// ブレンドステート
-	pipelineDesc.BlendState.RenderTarget[0].RenderTargetWriteMask
-		= D3D12_COLOR_WRITE_ENABLE_ALL; // RBGA全てのチャンネルを描画
+	//pipelineDesc.BlendState.RenderTarget[0].RenderTargetWriteMask
+	//	= D3D12_COLOR_WRITE_ENABLE_ALL; 
+	D3D12_RENDER_TARGET_BLEND_DESC& blendDesc = pipelineDesc.BlendState.RenderTarget[0];
+	blendDesc.RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL; // RBGA全てのチャンネルを描画
+
+	blendDesc.BlendEnable = true;                // ブレンドを有効にする
+	blendDesc.BlendOpAlpha = D3D12_BLEND_OP_ADD; // 加算
+	blendDesc.SrcBlendAlpha = D3D12_BLEND_ONE;   // ソースの値を100%使う
+	blendDesc.DestBlendAlpha = D3D12_BLEND_ZERO; // デストの値を  0%使う
+
+	// 加算合成
+	blendDesc.BlendOp = D3D12_BLEND_OP_ADD; // 加算
+	blendDesc.SrcBlend = D3D12_BLEND_ONE;   // ソースの値を100%使う
+	blendDesc.DestBlend = D3D12_BLEND_ONE;  // デストの値を100%使う
+
+	// 減算合成
+	blendDesc.BlendOp = D3D12_BLEND_OP_REV_SUBTRACT; // 減算(デスト - ソース)
+	blendDesc.SrcBlend = D3D12_BLEND_ONE;   // ソースの値を100%使う
+	blendDesc.DestBlend = D3D12_BLEND_ONE;  // デストの値を100%使う
+
+	// 色反転
+	blendDesc.BlendOp = D3D12_BLEND_OP_ADD; // 加算
+	blendDesc.SrcBlend = D3D12_BLEND_INV_DEST_COLOR; // 1.0f - デストカラーの値
+	blendDesc.DestBlend = D3D12_BLEND_ZERO;          // デストの値を  0%使う
+
+	// 半透明合成
+	blendDesc.BlendOp = D3D12_BLEND_OP_ADD; // 加算
+	blendDesc.SrcBlend = D3D12_BLEND_SRC_ALPHA;      // ソースのアルファ値
+	blendDesc.DestBlend = D3D12_BLEND_INV_SRC_ALPHA; // 1.0f - ソースのアルファ値
 
 	// 頂点レイアウトの設定
 	pipelineDesc.InputLayout.pInputElementDescs = inputLayout;
