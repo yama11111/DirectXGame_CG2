@@ -140,6 +140,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Component.cpp" />
+    <ClCompile Include="Keys.cpp" />
+    <ClCompile Include="MyDirectInput.cpp" />
     <ClCompile Include="MyDXAdapters.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MyDirectX.cpp" />
@@ -170,6 +172,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Component.h" />
+    <ClInclude Include="Keys.h" />
+    <ClInclude Include="MyDirectInput.h" />
     <ClInclude Include="MyDXAdapters.h" />
     <ClInclude Include="MyDirectX.h" />
     <ClInclude Include="MyDXCommandList.h" />

@@ -4,13 +4,11 @@
 #include <string>
 #include <DirectXMath.h>
 #include <d3dcompiler.h>
-#define DIRECTINPUT_VERSION 0x0800 // DirectInputのバージョン指定
-#include <dinput.h>
+#include "MyDirectInput.h"
+#include "Keys.h"
 #include"Result.h"
 
 #pragma comment(lib, "d3dcompiler.lib")
-#pragma comment(lib, "dinput8.lib")
-#pragma comment(lib, "dxguid.lib")
 
 using namespace DirectX;
 
@@ -27,21 +25,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	dx.Init(win.HandleWindow());
 
 	// DirectInput 初期化
-	IDirectInput8* directInput = nullptr;
-	Result(DirectInput8Create(
-		win.HandleWindowInstance(), DIRECTINPUT_VERSION, IID_IDirectInput8,
-		(void**)&directInput, nullptr));
-
-	// キーボードデバイス 生成
-	IDirectInputDevice8* keyboard = nullptr;
-	Result(directInput->CreateDevice(GUID_SysKeyboard, &keyboard, NULL));
-
-	// 入力データ形式セット
-	Result(keyboard->SetDataFormat(&c_dfDIKeyboard));
-
-	// 排他制御レベルセット
-	Result(keyboard->SetCooperativeLevel(
-		win.HandleWindow(), DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY));
+	MyDirectInput* input = MyDirectInput::GetInstance();
+	input->Init(win.HandleWindowInstance(), win.HandleWindow());
+	Keys* keys = Keys::GetInstance();
 
 	// ------------------------------ //
 
@@ -265,16 +251,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 		// ----- DirectX 毎フレーム処理 ----- //
 
-		// キーボード情報の取得開始
-		keyboard->Acquire();
+		// -------------------- Update -------------------- //
+		keys->Update();
 
-		// 全キーの入力状態を取得する
-		BYTE key[256] = {};
-		keyboard->GetDeviceState(sizeof(key), key);
+		
+		// ------------------------------------------------ //
 
+		// 描画準備
 		dx.PreDraw();
-
-		// --- 4.描画コマンド --- //
+		// --------------------- Draw --------------------- //
+		
 		// ビューポート設定コマンド
 		D3D12_VIEWPORT viewport{};
 		viewport.Width = win.SIZE->x; // 横幅
@@ -307,9 +293,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 		// 描画コマンド
 		dx.myCmdList.CommandList()->DrawInstanced(_countof(vertices), 1, 0, 0); // 全ての頂点を使って描画
-
-		// ---------------------- //
-
+		
+		// -------------------------------------------------- //
+		// 描画後処理
 		dx.PostDraw();
 
 		// ---------------------------------- //
