@@ -36,11 +36,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	XMFLOAT3 vertices[] =
 	{
 		{ -0.5f, -0.5f, 0.0f }, // 左下
-		{ +0.5f, -0.5f, 0.0f }, // 右下
-		{ -0.5f,  0.0f, 0.0f }, // 左中
-		{ +0.5f,  0.0f, 0.0f }, // 右中
 		{ -0.5f, +0.5f, 0.0f }, // 左上
+		{ +0.5f, -0.5f, 0.0f }, // 右下
 		{ +0.5f, +0.5f, 0.0f }, // 右上
+		//{ -0.5f,  0.0f, 0.0f }, // 左中
+		//{ +0.5f,  0.0f, 0.0f }, // 右中
 	};
 	// 頂点データ全体のサイズ = 頂点データ一つ分のサイズ * 頂点データの要素数
 	UINT sizeVB = static_cast<UINT>(sizeof(XMFLOAT3) * _countof(vertices));
@@ -292,6 +292,51 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	//float r = 1.0f;
 	//float g = 0.0f;
 
+	uint16_t indices[] =
+	{
+		0, 1, 2,
+		1, 2, 3,
+	};
+
+	// インデックスデータ全体のサイズ
+	UINT sizeIB = static_cast<UINT>(sizeof(uint16_t) * _countof(indices));
+
+	// リソース設定
+	resDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+	resDesc.Width = sizeIB; // インデックス情報が入る分のサイズ
+	resDesc.Height = 1;
+	resDesc.DepthOrArraySize = 1;
+	resDesc.MipLevels = 1;
+	resDesc.SampleDesc.Count = 1;
+	resDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+
+	// インデックスバッファの生成
+	ID3D12Resource* indexBuff = nullptr;
+	Result(dx.myDvc.Device()->CreateCommittedResource(
+		&heapProp, // ヒープ設定
+		D3D12_HEAP_FLAG_NONE,
+		&resDesc, // リソース設定
+		D3D12_RESOURCE_STATE_GENERIC_READ,
+		nullptr,
+		IID_PPV_ARGS(&indexBuff)));
+
+	// インデックスバッファをマッピング
+	uint16_t* indexMap = nullptr;
+	Result(indexBuff->Map(0, nullptr, (void**)&indexMap));
+	// 全インデックスに対して
+	for (int i = 0; i < _countof(indices); i++)
+	{
+		indexMap[i] = indices[i];
+	}
+	// マッピング解除
+	indexBuff->Unmap(0, nullptr);
+
+	// インデックスバッファビューの作成
+	D3D12_INDEX_BUFFER_VIEW ibView{};
+	ibView.BufferLocation = indexBuff->GetGPUVirtualAddress();
+	ibView.Format = DXGI_FORMAT_R16_UINT;
+	ibView.SizeInBytes = sizeIB;
+
 	// ------------------------------ //
 
 	// ゲームループ
@@ -342,6 +387,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		// 頂点バッファビューの設定コマンド
 		dx.myCmdList.CommandList()->IASetVertexBuffers(0, 1, &vbView);
 
+		// 頂点バッファビューの設定コマンド
+		dx.myCmdList.CommandList()->IASetIndexBuffer(&ibView);
+
 		// 定数バッファ
 		dx.myCmdList.CommandList()->SetGraphicsRootConstantBufferView(0, constBuffMaterial->GetGPUVirtualAddress());
 
@@ -350,7 +398,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		//constMapMaterial->color = XMFLOAT4(r, g, 0, 0.5f);
 
 		// 描画コマンド
-		dx.myCmdList.CommandList()->DrawInstanced(_countof(vertices), 1, 0, 0); // 全ての頂点を使って描画
+		//dx.myCmdList.CommandList()->DrawInstanced(_countof(vertices), 1, 0, 0); // 全ての頂点を使って描画
+		dx.myCmdList.CommandList()->DrawIndexedInstanced(_countof(indices), 1, 0, 0, 0); // 全ての頂点を使って描画
 		
 		// -------------------------------------------------- //
 		// 描画後処理
