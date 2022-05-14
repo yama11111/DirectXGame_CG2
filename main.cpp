@@ -36,8 +36,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	XMFLOAT3 vertices[] =
 	{
 		{ -0.5f, -0.5f, 0.0f }, // 左下
-		{ -0.5f, +0.5f, 0.0f }, // 左上
 		{ +0.5f, -0.5f, 0.0f }, // 右下
+		{ -0.5f,  0.0f, 0.0f }, // 左中
+		{ +0.5f,  0.0f, 0.0f }, // 右中
+		{ -0.5f, +0.5f, 0.0f }, // 左上
+		{ +0.5f, +0.5f, 0.0f }, // 右上
 	};
 	// 頂点データ全体のサイズ = 頂点データ一つ分のサイズ * 頂点データの要素数
 	UINT sizeVB = static_cast<UINT>(sizeof(XMFLOAT3) * _countof(vertices));
@@ -285,9 +288,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	ConstBufferDataMaterial* constMapMaterial = nullptr;
 	Result(constBuffMaterial->Map(0, nullptr, (void**)&constMapMaterial));
 	// 値を書きこむと自動的に転送される
-	float r = 1.0f;
-	float g = 0.0f;
-	constMapMaterial->color = XMFLOAT4(r, g, 0, 0.5f);
+	constMapMaterial->color = XMFLOAT4(1, 1, 1, 1);
+	//float r = 1.0f;
+	//float g = 0.0f;
 
 	// ------------------------------ //
 
@@ -342,9 +345,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		// 定数バッファ
 		dx.myCmdList.CommandList()->SetGraphicsRootConstantBufferView(0, constBuffMaterial->GetGPUVirtualAddress());
 
-		if (r > 0.0f) r -= 0.01f;
-		if (g < 1.0f) g += 0.01f;
-		constMapMaterial->color = XMFLOAT4(r, g, 0, 0.5f);
+		//if (r > 0.0f) r -= 0.01f;
+		//if (g < 1.0f) g += 0.01f;
+		//constMapMaterial->color = XMFLOAT4(r, g, 0, 0.5f);
 
 		// 描画コマンド
 		dx.myCmdList.CommandList()->DrawInstanced(_countof(vertices), 1, 0, 0); // 全ての頂点を使って描画
