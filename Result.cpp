@@ -7,3 +7,8 @@ bool Result(const HRESULT& result)
 	if (FAILED(result)) return false;
 	return true;
 }
+
+void Assert(const bool b)
+{
+	assert(b);
+}

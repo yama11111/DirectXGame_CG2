@@ -32,18 +32,35 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	// ------------------------------ //
 
 	// ------- 描画初期化処理 ------- //
-	// 頂点データ
-	XMFLOAT3 vertices[] =
+	// 頂点データ構造体
+	struct Vertex
 	{
-		{ -0.5f, -0.5f, 0.0f }, // 左下
-		{ -0.5f, +0.5f, 0.0f }, // 左上
-		{ +0.5f, -0.5f, 0.0f }, // 右下
-		{ +0.5f, +0.5f, 0.0f }, // 右上
+		XMFLOAT3 pos; // xyz座標
+		XMFLOAT2 uv; // uv座標
+	};
+
+	// 頂点データ
+	//XMFLOAT3 vertices[] =
+	//{
+	//	{ -0.5f, -0.5f, 0.0f }, // 左下
+	//	{ -0.5f, +0.5f, 0.0f }, // 左上
+	//	{ +0.5f, -0.5f, 0.0f }, // 右下
+	//	{ +0.5f, +0.5f, 0.0f }, // 右上
+	//	//{ -0.5f,  0.0f, 0.0f }, // 左中
+	//	//{ +0.5f,  0.0f, 0.0f }, // 右中
+	//};
+	Vertex vertices[] =
+	{
+		{{ -0.4f, -0.7f, 0.0f }, {0.0f, 1.0f}}, // 左下
+		{{ -0.4f, +0.7f, 0.0f }, {0.0f, 0.0f}}, // 左上
+		{{ +0.4f, -0.7f, 0.0f }, {1.0f, 1.0f}}, // 右下
+		{{ +0.4f, +0.7f, 0.0f }, {1.0f, 0.0f}}  // 右上
 		//{ -0.5f,  0.0f, 0.0f }, // 左中
 		//{ +0.5f,  0.0f, 0.0f }, // 右中
 	};
 	// 頂点データ全体のサイズ = 頂点データ一つ分のサイズ * 頂点データの要素数
-	UINT sizeVB = static_cast<UINT>(sizeof(XMFLOAT3) * _countof(vertices));
+	//UINT sizeVB = static_cast<UINT>(sizeof(XMFLOAT3) * _countof(vertices));
+	UINT sizeVB = static_cast<UINT>(sizeof(vertices[0]) * _countof(vertices));
 
 	// 頂点バッファ設定
 	D3D12_HEAP_PROPERTIES heapProp{}; // ヒープ設定
@@ -68,7 +85,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		IID_PPV_ARGS(&vertBuff)));
 
 	// GPU上のバッファに対応した仮想メモリ(メインメモリ上)を取得
-	XMFLOAT3* vertMap = nullptr;
+	Vertex* vertMap = nullptr;
 	Result(vertBuff->Map(0, nullptr, (void**)&vertMap));
 	// 全頂点に対して
 	for (int i = 0; i < _countof(vertices); i++)
@@ -85,7 +102,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	// 頂点バッファのサイズ
 	vbView.SizeInBytes = sizeVB;
 	// 頂点1つ分のデータサイズ
-	vbView.StrideInBytes = sizeof(XMFLOAT3);
+	//vbView.StrideInBytes = sizeof(XMFLOAT3);
+	vbView.StrideInBytes = sizeof(vertices[0]);
 
 	ID3DBlob* vsBlob = nullptr; // 頂点シェーダオブジェクト
 	ID3DBlob* psBlob = nullptr; // ピクセルシェーダオブジェクト
@@ -162,6 +180,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		}, // (1行で書いたほうが見やすい)
 
 		// 座標以外を渡す場合はさらに続ける
+
+		{
+			"TEXCOORD",
+			0,
+			DXGI_FORMAT_R32G32_FLOAT,
+			0,
+			D3D12_APPEND_ALIGNED_ELEMENT,
+			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
+			0
+		}
 	};
 
 	// グラフィックスパイプライン設定
@@ -291,11 +319,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	constMapMaterial->color = XMFLOAT4(1, 1, 1, 1);
 	//float r = 1.0f;
 	//float g = 0.0f;
-
+	
+	// インデックスデータ
 	uint16_t indices[] =
 	{
-		0, 1, 2,
-		1, 2, 3,
+		0, 1, 2, // 三角形1つ目
+		1, 2, 3, // 三角形2つ目
 	};
 
 	// インデックスデータ全体のサイズ
