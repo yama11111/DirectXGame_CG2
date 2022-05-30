@@ -1,19 +1,30 @@
-#include "MyWIndowsApplication.h"
+#include "MyWIndows.h"
 #include <string.h>
 
-MyWIndowsApplication::MyWIndowsApplication() : SIZE(nullptr)
+MyWindows* MyWindows::GetInstance()
 {
+	static MyWindows instance;
+	return &instance;
 }
 
-MyWIndowsApplication::~MyWIndowsApplication()
+LRESULT MyWindows::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
-	if (!(SIZE == nullptr)) delete SIZE;
+	// メッセージ毎にゲーム固有の処理
+	switch (msg)
+	{
+		//ウインドウ破棄時
+	case WM_DESTROY:
+		//OSにアプリ終了伝達
+		PostQuitMessage(0);
+		return 0;
+	}
+
+	// 標準のメッセージ処理
+	return DefWindowProc(hwnd, msg, wparam, lparam);
 }
 
-void MyWIndowsApplication::CreateMyWindow(const wchar_t* titleName, const Component& windowSize)
+void MyWindows::Create(const wchar_t* titleName, const Vec2& winSize)
 {
-	SIZE = new Component(windowSize.x, windowSize.y);
-
 	w.cbSize = sizeof(WNDCLASSEX);
 	w.lpfnWndProc = (WNDPROC)WindowProc;	 // ウィンドウプロシージャ設定
 	w.lpszClassName = L"DirectXGame";		 // ウィンドウクラス名
@@ -22,7 +33,7 @@ void MyWIndowsApplication::CreateMyWindow(const wchar_t* titleName, const Compon
 	// ウィンドウクラスをOSに登録
 	RegisterClassEx(&w);
 	// ウィンドウサイズ {x, y, width，height}
-	RECT wrc = { 0, 0, SIZE->x, SIZE->y };
+	RECT wrc = { 0, 0, winSize.x, winSize.y };
 	// 自動でサイスを補正
 	AdjustWindowRect(&wrc, WS_OVERLAPPEDWINDOW, false);
 	// ------- ウィンドウ生成 ------- //
@@ -44,48 +55,33 @@ void MyWIndowsApplication::CreateMyWindow(const wchar_t* titleName, const Compon
 	// ------------------------------ //
 }
 
-bool MyWIndowsApplication::MessageLoop()
+bool MyWindows::CheckMessage()
 {
 	// メッセージがある？
 	if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
 	{
 		TranslateMessage(&msg); // キー入力メッセージの処理
-		DispatchMessage(&msg); // プロシージにメッセージを送る
+		DispatchMessage(&msg); // プロシージャにメッセージを送る
 	}
 
 	// ×ボタンで終了メッセージが来たらゲームループを抜ける
 	if (msg.message == WM_QUIT) return true;
+
 	return false;
 }
 
-void MyWIndowsApplication::FinalProcess()
+void MyWindows::FinalProcess()
 {
 	// ウィンドウクラスを登録解除
 	UnregisterClass(w.lpszClassName, w.hInstance);
 }
 
-HWND MyWIndowsApplication::HandleWindow()
+HWND MyWindows::HandleWindow()
 {
 	return hwnd;
 }
 
-HINSTANCE MyWIndowsApplication::HandleWindowInstance()
+HINSTANCE MyWindows::HandleWindowInstance()
 {
 	return w.hInstance;
-}
-
-LRESULT MyWIndowsApplication::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
-{
-	// メッセージ毎にゲーム固有の処理
-	switch (msg)
-	{
-		//ウインドウ破棄時
-	case WM_DESTROY:
-		//OSにアプリ終了伝達
-		PostQuitMessage(0);
-		return 0;
-	}
-
-	// 標準のメッセージ処理
-	return DefWindowProc(hwnd, msg, wparam, lparam);
 }

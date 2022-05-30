@@ -1,16 +1,16 @@
 #include "MyDirectX.h"
 #include "Result.h"
 
-MyDirectX::MyDirectX()
-{
-}
 
-MyDirectX::~MyDirectX()
+MyDirectX* MyDirectX::GetInstance()
 {
+	static MyDirectX instance;
+	return &instance;
 }
 
 void MyDirectX::Init(const HWND& hwnd)
 {
+	EnableDebugLayer();
 	myAdpts.Init();
 	myDvc.Init(myAdpts.Template());
 	myCmdList.Init(myDvc.Device());
@@ -63,4 +63,8 @@ void MyDirectX::EnableDebugLayer()
 		debugController->EnableDebugLayer();
 	}
 #endif
+}
+
+MyDirectX::~MyDirectX()
+{
 }

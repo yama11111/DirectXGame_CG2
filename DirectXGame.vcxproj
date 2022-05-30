@@ -154,7 +154,7 @@
     <ClCompile Include="MyDXSwapChain.cpp" />
     <ClCompile Include="Vec3.cpp" />
     <ClCompile Include="MyPrimitiveDrawer.cpp" />
-    <ClCompile Include="MyWIndowsApplication.cpp" />
+    <ClCompile Include="MyWIndows.cpp" />
     <ClCompile Include="Result.cpp" />
     <ClCompile Include="Vec2.cpp" />
   </ItemGroup>
@@ -187,7 +187,7 @@
     <ClInclude Include="MyDXSwapChain.h" />
     <ClInclude Include="Vec3.h" />
     <ClInclude Include="MyPrimitiveDrawer.h" />
-    <ClInclude Include="MyWIndowsApplication.h" />
+    <ClInclude Include="MyWIndows.h" />
     <ClInclude Include="Result.h" />
     <ClInclude Include="Vec2.h" />
   </ItemGroup>
