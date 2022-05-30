@@ -87,6 +87,9 @@
     <ClCompile Include="MyDXSwapChain.cpp">
       <Filter>ソース ファイル\MyDX</Filter>
     </ClCompile>
+    <ClCompile Include="MyMath.cpp">
+      <Filter>ソース ファイル\Math</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="BasicVS.hlsl" />
@@ -143,6 +146,9 @@
     </ClInclude>
     <ClInclude Include="MyDXResourceBarrier.h">
       <Filter>ヘッダー ファイル\MyDX</Filter>
+    </ClInclude>
+    <ClInclude Include="MyMath.h">
+      <Filter>ヘッダー ファイル\Math</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

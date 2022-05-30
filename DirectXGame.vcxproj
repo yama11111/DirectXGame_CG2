@@ -152,6 +152,7 @@
     <ClCompile Include="MyDXRenderTargetView.cpp" />
     <ClCompile Include="MyDXResourceBarrier.cpp" />
     <ClCompile Include="MyDXSwapChain.cpp" />
+    <ClCompile Include="MyMath.cpp" />
     <ClCompile Include="Vec3.cpp" />
     <ClCompile Include="MyPrimitiveDrawer.cpp" />
     <ClCompile Include="MyWIndows.cpp" />
@@ -185,6 +186,7 @@
     <ClInclude Include="MyDXRenderTargetView.h" />
     <ClInclude Include="MyDXResourceBarrier.h" />
     <ClInclude Include="MyDXSwapChain.h" />
+    <ClInclude Include="MyMath.h" />
     <ClInclude Include="Vec3.h" />
     <ClInclude Include="MyPrimitiveDrawer.h" />
     <ClInclude Include="MyWIndows.h" />
