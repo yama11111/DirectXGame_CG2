@@ -19,3 +19,4 @@ int Abs(int a);
 
 // 度数法 -> ラジアン
 double Radian(double Angle);
+
