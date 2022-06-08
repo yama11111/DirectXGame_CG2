@@ -11,7 +11,7 @@ Mat4::Mat4()
 	}
 }
 
-constexpr Mat4::Mat4(const float value[4][4])
+Mat4::Mat4(const float value[4][4])
 {
 	for (int i = 0; i < 4; i++)
 	{
@@ -22,7 +22,7 @@ constexpr Mat4::Mat4(const float value[4][4])
 	}
 }
 
-constexpr Mat4 Mat4::operator*(Mat4 m) const
+Mat4 Mat4::operator*(Mat4 m)
 {
 	Mat4 mat;
 	for (int i = 0; i < 4; i++) {
