@@ -62,15 +62,22 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	//	//{ -0.5f,  0.0f, 0.0f }, // 左中
 	//	//{ +0.5f,  0.0f, 0.0f }, // 右中
 	//};
+	//Vertex vertices[] =
+	//{
+	//	{{   0.0f, 100.0f, 0.0f }, {0.0f, 1.0f}}, // 左下
+	//	{{   0.0f,   0.0f, 0.0f }, {0.0f, 0.0f}}, // 左上
+	//	{{ 100.0f, 100.0f, 0.0f }, {1.0f, 1.0f}}, // 右下
+	//	{{ 100.0f,   0.0f, 0.0f }, {1.0f, 0.0f}}  // 右上
+	//};
 	Vertex vertices[] =
 	{
-		{{   0.0f, 100.0f, 0.0f }, {0.0f, 1.0f}}, // 左下
-		{{   0.0f,   0.0f, 0.0f }, {0.0f, 0.0f}}, // 左上
-		{{ 100.0f, 100.0f, 0.0f }, {1.0f, 1.0f}}, // 右下
-		{{ 100.0f,   0.0f, 0.0f }, {1.0f, 0.0f}}  // 右上
-		//{ -0.5f,  0.0f, 0.0f }, // 左中
-		//{ +0.5f,  0.0f, 0.0f }, // 右中
+		{{ -50.0f, -50.0f, 50.0f }, {0.0f, 1.0f}}, // 左下
+		{{ -50.0f,  50.0f, 50.0f }, {0.0f, 0.0f}}, // 左上
+		{{  50.0f, -50.0f, 50.0f }, {1.0f, 1.0f}}, // 右下
+		{{  50.0f,  50.0f, 50.0f }, {1.0f, 0.0f}}  // 右上
 	};
+
+
 	// 頂点データ全体のサイズ = 頂点データ一つ分のサイズ * 頂点データの要素数
 	//UINT sizeVB = static_cast<UINT>(sizeof(XMFLOAT3) * _countof(vertices));
 	UINT sizeVB = static_cast<UINT>(sizeof(vertices[0]) * _countof(vertices));
@@ -405,6 +412,24 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	constMapTransform->mat.r[1].m128_f32[1] = -2.0f / WIN_SIZE.y;
 	constMapTransform->mat.r[3].m128_f32[0] = -1.0f;
 	constMapTransform->mat.r[3].m128_f32[1] =  1.0f;
+
+	// 平行射影行列の計算
+	constMapTransform->mat = XMMatrixOrthographicOffCenterLH(
+		0.0f, WIN_SIZE.x, // 左端, 右端
+		WIN_SIZE.y, 0.0f, // 下端, 上端
+		0.0f, 1.0f        // 前端, 奥端
+	);
+	// 投資投影行列の計算
+	XMMATRIX matProjection = XMMatrixPerspectiveFovLH(
+		XMConvertToRadians(45.0f),      // 上下画角45度
+		(float)WIN_SIZE.x / WIN_SIZE.y, // アスペクト比 (画面横幅/画面縦幅)
+		0.1f, 1000.0f                   // 前端, 奥端
+	);
+
+	////////
+
+	// 定数バッファに転送
+	constMapTransform->mat = matProjection;
 
 	// インデックスデータ
 	uint16_t indices[] =
