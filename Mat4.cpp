@@ -22,7 +22,7 @@ Mat4::Mat4(const float value[4][4])
 	}
 }
 
-Mat4 Mat4::operator*(Mat4 m)
+Mat4 Mat4::operator*(Mat4& m)
 {
 	Mat4 mat;
 	for (int i = 0; i < 4; i++) {

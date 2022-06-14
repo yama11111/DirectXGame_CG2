@@ -71,10 +71,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	//};
 	Vertex vertices[] =
 	{
-		{{ -50.0f, -50.0f, 50.0f }, {0.0f, 1.0f}}, // 左下
-		{{ -50.0f,  50.0f, 50.0f }, {0.0f, 0.0f}}, // 左上
-		{{  50.0f, -50.0f, 50.0f }, {1.0f, 1.0f}}, // 右下
-		{{  50.0f,  50.0f, 50.0f }, {1.0f, 0.0f}}  // 右上
+		{{ -50.0f, -50.0f, 0.0f }, {0.0f, 1.0f}}, // 左下
+		{{ -50.0f,  50.0f, 0.0f }, {0.0f, 0.0f}}, // 左上
+		{{  50.0f, -50.0f, 0.0f }, {1.0f, 1.0f}}, // 右下
+		{{  50.0f,  50.0f, 0.0f }, {1.0f, 0.0f}}  // 右上
 	};
 
 
@@ -426,10 +426,18 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		0.1f, 1000.0f                   // 前端, 奥端
 	);
 
+	// ビュー変換行列
+	XMMATRIX matView;
+	XMFLOAT3 eye(0, 0, -100); // 視点座標
+	XMFLOAT3 target(0, 0, 0); // 注視点座標
+	XMFLOAT3 up(0, 1, 0);     // 上方向ベクトル
+	matView = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
+
 	////////
 
 	// 定数バッファに転送
-	constMapTransform->mat = matProjection;
+	//constMapTransform->mat = matProjection;
+	constMapTransform->mat = matProjection * matView;
 
 	// インデックスデータ
 	uint16_t indices[] =
@@ -613,8 +621,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 	// ハンドルの指す位置にシェーダーリソースビュー作成
 	dx->myDvc.Device()->CreateShaderResourceView(texBuff, &srvDesc, srvHandle);
-
-
 
 	// ------------------------------ //
 
