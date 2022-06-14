@@ -437,7 +437,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 	// 定数バッファに転送
 	//constMapTransform->mat = matProjection;
-	constMapTransform->mat = matProjection * matView;
+	constMapTransform->mat = matView * matProjection;
+
+	float angle = 0.0f; // カメラの回転角
 
 	// インデックスデータ
 	uint16_t indices[] =
@@ -635,6 +637,20 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		// -------------------- Update -------------------- //
 		keys->Update();
 
+		if (keys->IsDown(DIK_D) || keys->IsDown(DIK_A))
+		{
+			if (keys->IsDown(DIK_D)) angle += XMConvertToRadians(1.0f);
+			else if (keys->IsDown(DIK_A)) angle -= XMConvertToRadians(1.0f);
+
+			// angleラジアンだけy軸回転 (半径-100)
+			eye.x = -100 * sinf(angle);
+			eye.z = -100 * cosf(angle);
+
+			matView = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
+		}
+
+		// 定数バッファに転送
+		constMapTransform->mat = matView * matProjection;
 		
 		// ------------------------------------------------ //
 
