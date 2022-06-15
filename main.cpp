@@ -433,13 +433,42 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	XMFLOAT3 up(0, 1, 0);     // 上方向ベクトル
 	matView = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
 
+	//// ワールド変換行列
+	//XMMATRIX matWorld;
+	//matWorld = {
+	//	1,0,0,0,
+	//	0,1,0,0,
+	//	0,0,1,0,
+	//	0,0,0,1,
+	//};
+
+	//XMMATRIX matScale; // スケーリング行列
+	//matScale = XMMatrixScaling(1.0f, 0.5f, 1.0f);
+	//matWorld *= matScale; // ワールド行列にスケーリングを反映
+
+	//XMMATRIX matRot; // 回転行列
+	//matRot = XMMatrixIdentity();
+	//matRot *= XMMatrixRotationZ(XMConvertToRadians(0.0f)); // Z軸周りに回転
+	//matRot *= XMMatrixRotationZ(XMConvertToRadians(15.0f)); // X軸周りに回転
+	//matRot *= XMMatrixRotationZ(XMConvertToRadians(30.0f)); // Y軸周りに回転
+	//matWorld *= matRot; // ワールド変換行列に回転を反映
+
+	//XMMATRIX matTrans; // 平行移動行列
+	//matTrans = XMMatrixTranslation(-50.0f, 0, 0);
+	//matWorld *= matTrans; // ワールド行列に平行移動を反映
+
 	////////
 
 	// 定数バッファに転送
 	//constMapTransform->mat = matProjection;
-	constMapTransform->mat = matView * matProjection;
+	//constMapTransform->mat = matView * matProjection;
+	//constMapTransform->mat = matWorld * matView * matProjection;
 
 	float angle = 0.0f; // カメラの回転角
+
+	XMFLOAT3 scale	  = { 1,1,1 }; // スケーリング倍率
+	XMFLOAT3 rotation = { 0,0,0 }; // 回転角
+	XMFLOAT3 position = { 0,0,0 }; // 座標
 
 	// インデックスデータ
 	uint16_t indices[] =
@@ -649,8 +678,42 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 			matView = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
 		}
 
+		if (keys->IsDown(DIK_UP) || keys->IsDown(DIK_DOWN) || keys->IsDown(DIK_RIGHT) || keys->IsDown(DIK_LEFT))
+		{
+			// 座標移動 (Z座標)
+			if (keys->IsDown(DIK_UP))	 position.z += 1.0f;
+			if (keys->IsDown(DIK_DOWN))  position.z -= 1.0f;
+			if (keys->IsDown(DIK_RIGHT)) position.x += 1.0f;
+			if (keys->IsDown(DIK_LEFT))  position.x -= 1.0f;
+		}
+
+		// ワールド変換行列
+
+		XMMATRIX matScale; // スケーリング行列
+		matScale = XMMatrixScaling(scale.x, scale.y, scale.z);
+
+		XMMATRIX matRot; // 回転行列
+		matRot = XMMatrixIdentity();
+		matRot *= XMMatrixRotationZ(XMConvertToRadians(rotation.z)); // Z軸周りに回転
+		matRot *= XMMatrixRotationZ(XMConvertToRadians(rotation.x)); // X軸周りに回転
+		matRot *= XMMatrixRotationZ(XMConvertToRadians(rotation.y)); // Y軸周りに回転
+
+		XMMATRIX matTrans; // 平行移動行列
+		matTrans = XMMatrixTranslation(position.x, position.y, position.z);
+
+		XMMATRIX matWorld;
+		matWorld = {
+			1,0,0,0,
+			0,1,0,0,
+			0,0,1,0,
+			0,0,0,1,
+		};
+		matWorld *= matScale; // ワールド行列にスケーリングを反映
+		matWorld *= matRot; // ワールド変換行列に回転を反映
+		matWorld *= matTrans; // ワールド行列に平行移動を反映
+
 		// 定数バッファに転送
-		constMapTransform->mat = matView * matProjection;
+		constMapTransform->mat = matWorld * matView * matProjection;
 		
 		// ------------------------------------------------ //
 
