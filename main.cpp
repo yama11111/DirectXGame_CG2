@@ -423,7 +423,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	XMMATRIX matProjection = XMMatrixPerspectiveFovLH(
 		XMConvertToRadians(45.0f),      // 上下画角45度
 		(float)WIN_SIZE.x / WIN_SIZE.y, // アスペクト比 (画面横幅/画面縦幅)
-		0.1f, 1000.0f                   // 前端, 奥端
+		0.1f, 500.0f                   // 前端, 奥端
 	);
 
 	// ビュー変換行列
@@ -666,26 +666,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		// -------------------- Update -------------------- //
 		keys->Update();
 
-		if (keys->IsDown(DIK_D) || keys->IsDown(DIK_A))
-		{
-			if (keys->IsDown(DIK_D)) angle += XMConvertToRadians(1.0f);
-			else if (keys->IsDown(DIK_A)) angle -= XMConvertToRadians(1.0f);
+		eye.z -= 0.5f;
+		matView = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
 
-			// angleラジアンだけy軸回転 (半径-100)
-			eye.x = -100 * sinf(angle);
-			eye.z = -100 * cosf(angle);
+		// 座標移動
+		if (keys->IsDown(DIK_W)) position.y += 1.0f;
+		if (keys->IsDown(DIK_S)) position.y -= 1.0f;
+		if (keys->IsDown(DIK_D)) position.x += 1.0f;
+		if (keys->IsDown(DIK_A)) position.x -= 1.0f;
 
-			matView = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
-		}
-
-		if (keys->IsDown(DIK_UP) || keys->IsDown(DIK_DOWN) || keys->IsDown(DIK_RIGHT) || keys->IsDown(DIK_LEFT))
-		{
-			// 座標移動 (Z座標)
-			if (keys->IsDown(DIK_UP))	 position.z += 1.0f;
-			if (keys->IsDown(DIK_DOWN))  position.z -= 1.0f;
-			if (keys->IsDown(DIK_RIGHT)) position.x += 1.0f;
-			if (keys->IsDown(DIK_LEFT))  position.x -= 1.0f;
-		}
+		rotation.z += 0.5f;
 
 		// ワールド変換行列
 
@@ -767,6 +757,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 		// 描画コマンド
 		//dx.myCmdList.CommandList()->DrawInstanced(_countof(vertices), 1, 0, 0); // 全ての頂点を使って描画
+
 		dx->myCmdList.CommandList()->DrawIndexedInstanced(_countof(indices), 1, 0, 0, 0); // 全ての頂点を使って描画
 		
 		// -------------------------------------------------- //
