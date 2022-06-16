@@ -44,37 +44,43 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	};
 
 	// 頂点データ
-	//XMFLOAT3 vertices[] =
-	//{
-	//	{ -0.5f, -0.5f, 0.0f }, // 左下
-	//	{ -0.5f, +0.5f, 0.0f }, // 左上
-	//	{ +0.5f, -0.5f, 0.0f }, // 右下
-	//	{ +0.5f, +0.5f, 0.0f }, // 右上
-	//	//{ -0.5f,  0.0f, 0.0f }, // 左中
-	//	//{ +0.5f,  0.0f, 0.0f }, // 右中
-	//};
-	//Vertex vertices[] =
-	//{
-	//	{{ -0.4f, -0.7f, 0.0f }, {0.0f, 1.0f}}, // 左下
-	//	{{ -0.4f, +0.7f, 0.0f }, {0.0f, 0.0f}}, // 左上
-	//	{{ +0.4f, -0.7f, 0.0f }, {1.0f, 1.0f}}, // 右下
-	//	{{ +0.4f, +0.7f, 0.0f }, {1.0f, 0.0f}}  // 右上
-	//	//{ -0.5f,  0.0f, 0.0f }, // 左中
-	//	//{ +0.5f,  0.0f, 0.0f }, // 右中
-	//};
-	//Vertex vertices[] =
-	//{
-	//	{{   0.0f, 100.0f, 0.0f }, {0.0f, 1.0f}}, // 左下
-	//	{{   0.0f,   0.0f, 0.0f }, {0.0f, 0.0f}}, // 左上
-	//	{{ 100.0f, 100.0f, 0.0f }, {1.0f, 1.0f}}, // 右下
-	//	{{ 100.0f,   0.0f, 0.0f }, {1.0f, 0.0f}}  // 右上
-	//};
 	Vertex vertices[] =
 	{
-		{{ -50.0f, -50.0f, 0.0f }, {0.0f, 1.0f}}, // 左下
-		{{ -50.0f,  50.0f, 0.0f }, {0.0f, 0.0f}}, // 左上
-		{{  50.0f, -50.0f, 0.0f }, {1.0f, 1.0f}}, // 右下
-		{{  50.0f,  50.0f, 0.0f }, {1.0f, 0.0f}}  // 右上
+		// 前
+		{{ -5.0f, -5.0f, -5.0f }, {0.0f, 1.0f}}, // 左下
+		{{ -5.0f,  5.0f, -5.0f }, {0.0f, 0.0f}}, // 左上
+		{{  5.0f, -5.0f, -5.0f }, {1.0f, 1.0f}}, // 右下
+		{{  5.0f,  5.0f, -5.0f }, {1.0f, 0.0f}}, // 右上
+
+		// 後
+		{{ -5.0f, -5.0f,  5.0f }, {0.0f, 1.0f}}, // 左下
+		{{ -5.0f,  5.0f,  5.0f }, {0.0f, 0.0f}}, // 左上
+		{{  5.0f, -5.0f,  5.0f }, {1.0f, 1.0f}}, // 右下
+		{{  5.0f,  5.0f,  5.0f }, {1.0f, 0.0f}}, // 右上
+
+		// 左
+		{{ -5.0f, -5.0f, -5.0f }, {0.0f, 1.0f}}, // 左下
+		{{ -5.0f, -5.0f,  5.0f }, {0.0f, 0.0f}}, // 左上
+		{{ -5.0f,  5.0f, -5.0f }, {1.0f, 1.0f}}, // 右下
+		{{ -5.0f,  5.0f,  5.0f }, {1.0f, 0.0f}}, // 右上
+
+		// 右
+		{{  5.0f, -5.0f, -5.0f }, {0.0f, 1.0f}}, // 左下
+		{{  5.0f, -5.0f,  5.0f }, {0.0f, 0.0f}}, // 左上
+		{{  5.0f,  5.0f, -5.0f }, {1.0f, 1.0f}}, // 右下
+		{{  5.0f,  5.0f,  5.0f }, {1.0f, 0.0f}}, // 右上
+
+		// 下
+		{{ -5.0f, -5.0f, -5.0f }, {0.0f, 1.0f}}, // 左下
+		{{ -5.0f, -5.0f,  5.0f }, {0.0f, 0.0f}}, // 左上
+		{{  5.0f, -5.0f, -5.0f }, {1.0f, 1.0f}}, // 右下
+		{{  5.0f, -5.0f,  5.0f }, {1.0f, 0.0f}}, // 右上
+
+		// 上
+		{{ -5.0f,  5.0f, -5.0f }, {0.0f, 1.0f}}, // 左下
+		{{ -5.0f,  5.0f,  5.0f }, {0.0f, 0.0f}}, // 左上
+		{{  5.0f,  5.0f, -5.0f }, {1.0f, 1.0f}}, // 右下
+		{{  5.0f,  5.0f,  5.0f }, {1.0f, 0.0f}}, // 右上
 	};
 
 
@@ -470,11 +476,82 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	XMFLOAT3 rotation = { 0,0,0 }; // 回転角
 	XMFLOAT3 position = { 0,0,0 }; // 座標
 
+	D3D12_RESOURCE_DESC depthResourceDesc{};
+	depthResourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+	depthResourceDesc.Width = WIN_SIZE.x; // レンダーターゲットに合わせる
+	depthResourceDesc.Height = WIN_SIZE.y; // レンダーターゲットに合わせる
+	depthResourceDesc.DepthOrArraySize = 1;
+	depthResourceDesc.Format = DXGI_FORMAT_D32_FLOAT; // 深度値フォーマット
+	depthResourceDesc.SampleDesc.Count = 1;
+	depthResourceDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL; // デプスステンシル
+
+	// 深度値用ヒーププロパティ
+	D3D12_HEAP_PROPERTIES depthHeapProp{};
+	depthHeapProp.Type = D3D12_HEAP_TYPE_DEFAULT;
+	// 深度値のクリア設定
+	D3D12_CLEAR_VALUE depthClearValue{};
+	depthClearValue.DepthStencil.Depth = 1.0f; // 深度値1.0f(最大値)でクリア
+	depthClearValue.Format = DXGI_FORMAT_D32_FLOAT; // 深度値フォーマット
+
+	// リソース生成
+	ID3D12Resource* depthBuff = nullptr;
+	Result(dx->myDvc.Device()->CreateCommittedResource(
+		&depthHeapProp,
+		D3D12_HEAP_FLAG_NONE,
+		&depthResourceDesc,
+		D3D12_RESOURCE_STATE_DEPTH_WRITE,
+		&depthClearValue,
+		IID_PPV_ARGS(&depthBuff)
+	));
+
+	// 深度ビュー用デスクリプターヒープ作成
+	D3D12_DESCRIPTOR_HEAP_DESC dsvHeapDesc{};
+	dsvHeapDesc.NumDescriptors = 1; // 深度ビューは1つ
+	dsvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV; // デプスステンシルビュー
+	ID3D12DescriptorHeap* dsvHeap = nullptr;
+	Result(dx->myDvc.Device()->CreateDescriptorHeap(&dsvHeapDesc, IID_PPV_ARGS(&dsvHeap)));
+
+	// 深度ビュー作成
+	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc = {};
+	dsvDesc.Format = DXGI_FORMAT_D32_FLOAT; // 深度値フォーマット
+	dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
+	dx->myDvc.Device()->CreateDepthStencilView(
+		depthBuff,
+		&dsvDesc,
+		dsvHeap->GetCPUDescriptorHandleForHeapStart());
+
+	// デプスステンシルステートの設定
+	pipelineDesc.DepthStencilState.DepthEnable = true; // 深度テスト
+	pipelineDesc.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL; // 書き込み許可
+	pipelineDesc.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS; // 小さければ合格
+	pipelineDesc.DSVFormat = DXGI_FORMAT_D32_FLOAT; // 深度フォーマット
+
 	// インデックスデータ
 	uint16_t indices[] =
 	{
+		// 前
 		0, 1, 2, // 三角形1つ目
 		1, 2, 3, // 三角形2つ目
+
+		// 後
+		4, 5, 6, // 三角形1つ目
+		5, 6, 7, // 三角形2つ目
+
+		// 左
+		8, 9, 10, // 三角形1つ目
+		9, 10, 11, // 三角形2つ目
+
+		// 右
+		12, 13, 14, // 三角形1つ目
+		13, 14, 15, // 三角形2つ目
+
+		// 下
+		16, 17, 18, // 三角形1つ目
+		17, 18, 19, // 三角形2つ目
+
+		// 上
+		20, 21, 22, // 三角形1つ目
+		21, 22, 23, // 三角形2つ目
 	};
 
 	// インデックスデータ全体のサイズ
@@ -718,7 +795,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		// ------------------------------------------------ //
 
 		// 描画準備
-		dx->PreDraw();
+		dx->PreDraw(dsvHeap);
 		// --------------------- Draw --------------------- //
 		
 		// ビューポート設定コマンド

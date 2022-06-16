@@ -25,10 +25,11 @@ ID3D12GraphicsCommandList* MyDXCommandList::CommandList()
 	return commandList;
 }
 
-void MyDXCommandList::ClearScreen(const D3D12_CPU_DESCRIPTOR_HANDLE& rtvHandle, const ClearColor& color)
+void MyDXCommandList::ClearScreen(const D3D12_CPU_DESCRIPTOR_HANDLE& rtvHandle,				D3D12_CPU_DESCRIPTOR_HANDLE &dsvHandle, const ClearColor& color)
 {
 	FLOAT clearColor[] = { color.r,color.g, color.b, color.a };
 	commandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
+	commandList->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 }
 
 void MyDXCommandList::CloseCommand()

@@ -26,7 +26,7 @@ public:
 	static MyDirectX* GetInstance();
 	
 	void Init(const HWND& hwnd);
-	void PreDraw();
+	void PreDraw(ID3D12DescriptorHeap* dsvHeap);
 	void PostDraw();
 	void EnableDebugLayer();
 private:

@@ -18,7 +18,8 @@ public:
 		float b = 0.0f;
 		float a = 0.0f;
 	};
-	void ClearScreen(const D3D12_CPU_DESCRIPTOR_HANDLE& rtvHandle, const ClearColor& color);
+	void ClearScreen(const D3D12_CPU_DESCRIPTOR_HANDLE& rtvHandle, 
+				D3D12_CPU_DESCRIPTOR_HANDLE& dsvHandle, const ClearColor& color);
 	void CloseCommand();
 	void ClearQueue();
 	void PreStore();

@@ -20,7 +20,7 @@ void MyDirectX::Init(const HWND& hwnd)
 	myFence.Init(myDvc.Device());
 }
 
-void MyDirectX::PreDraw()
+void MyDirectX::PreDraw(ID3D12DescriptorHeap* dsvHeap)
 {
 	myRscBarrier.ChangeToDraw(myCmdList.CommandList(), mySwapChain.SwapChain(), myRTV.BackBuffers());
 
@@ -28,10 +28,13 @@ void MyDirectX::PreDraw()
 	// レンダーターゲットビューのハンドルを取得
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = myRTV.Handle();
 	rtvHandle.ptr += myRscBarrier.BBIndex() * myDvc.Device()->GetDescriptorHandleIncrementSize(myRTV.Desc().Type);
-	myCmdList.CommandList()->OMSetRenderTargets(1, &rtvHandle, false, nullptr);
+	// 深度ステンシルビュー用のデスクリプターヒープのハンドルを取得
+	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = dsvHeap->GetCPUDescriptorHandleForHeapStart();
+	myCmdList.CommandList()->OMSetRenderTargets(1, &rtvHandle, false, &dsvHandle);
 
 	// 3.画面クリア {R, G, B, A}
-	myCmdList.ClearScreen(rtvHandle, { 0.1f, 0.25f, 0.5f, 0.0f }); // 青っぽい色
+	myCmdList.ClearScreen(rtvHandle, dsvHandle, 
+		{ 0.1f, 0.25f, 0.5f, 0.0f }); // 青っぽい色
 }
 
 void MyDirectX::PostDraw()
