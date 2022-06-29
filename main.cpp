@@ -72,17 +72,98 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		{{  5.0f,  5.0f,  5.0f }, {}, {1.0f, 0.0f}}, // 右上
 
 		// 下
-		{{ -5.0f, -5.0f, -5.0f }, {}, {0.0f, 1.0f}}, // 左下
-		{{ -5.0f, -5.0f,  5.0f }, {}, {0.0f, 0.0f}}, // 左上
-		{{  5.0f, -5.0f, -5.0f }, {}, {1.0f, 1.0f}}, // 右下
-		{{  5.0f, -5.0f,  5.0f }, {}, {1.0f, 0.0f}}, // 右上
+		{{ -5.0f, -5.0f,  5.0f }, {}, {0.0f, 1.0f}}, // 左下
+		{{ -5.0f, -5.0f, -5.0f }, {}, {0.0f, 0.0f}}, // 左上
+		{{  5.0f, -5.0f,  5.0f }, {}, {1.0f, 1.0f}}, // 右下
+		{{  5.0f, -5.0f, -5.0f }, {}, {1.0f, 0.0f}}, // 右上
 
 		// 上
-		{{ -5.0f,  5.0f, -5.0f }, {}, {0.0f, 1.0f}}, // 左下
-		{{ -5.0f,  5.0f,  5.0f }, {}, {0.0f, 0.0f}}, // 左上
-		{{  5.0f,  5.0f, -5.0f }, {}, {1.0f, 1.0f}}, // 右下
-		{{  5.0f,  5.0f,  5.0f }, {}, {1.0f, 0.0f}}, // 右上
+		{{ -5.0f,  5.0f,  5.0f }, {}, {0.0f, 1.0f}}, // 左下
+		{{ -5.0f,  5.0f, -5.0f }, {}, {0.0f, 0.0f}}, // 左上
+		{{  5.0f,  5.0f,  5.0f }, {}, {1.0f, 1.0f}}, // 右下
+		{{  5.0f,  5.0f, -5.0f }, {}, {1.0f, 0.0f}}, // 右上
 	};
+
+	// インデックスデータ
+	uint16_t indices[] =
+	{
+		// 前
+		0, 1, 2, // 三角形1つ目
+		2, 1, 3, // 三角形2つ目
+
+		// 後
+		6, 7, 4, // 三角形1つ目
+		4, 7, 5, // 三角形2つ目
+
+		// 左
+		8, 9, 10, // 三角形1つ目
+		10, 9, 11, // 三角形2つ目
+
+		// 右
+		14, 15, 12, // 三角形1つ目
+		12, 15, 13, // 三角形2つ目
+
+		// 下
+		16, 17, 18, // 三角形1つ目
+		18, 17, 19, // 三角形2つ目
+
+		//// 上
+		22, 23, 20, // 三角形1つ目
+		20, 23, 21, // 三角形2つ目
+	};
+
+	//// インデックスデータ
+	//uint16_t indices[] =
+	//{
+	//	// 前
+	//	0, 1, 2, // 三角形1つ目
+	//	2, 1, 3, // 三角形2つ目
+
+	//	// 後
+	//	5, 4, 6, // 三角形1つ目
+	//	5, 6, 7, // 三角形2つ目
+
+	//	// 左
+	//	8, 9, 10, // 三角形1つ目
+	//	10, 9, 11, // 三角形2つ目
+
+	//	// 右
+	//	13, 12, 14, // 三角形1つ目
+	//	13, 14, 15, // 三角形2つ目
+
+	//	// 下
+	//	16, 17, 18, // 三角形1つ目
+	//	18, 17, 19, // 三角形2つ目
+
+	//	//// 上
+	//	21, 20, 22, // 三角形1つ目
+	//	21, 22, 23, // 三角形2つ目
+	//};
+
+
+	for (int i = 0; i < 36 / 3; i++)
+	{// 三角形1つごとに計算していく
+		// 三角形のインデックスを取り出して、一般的な変数に入れる
+		unsigned short index0 = indices[i * 3 + 0];
+		unsigned short index1 = indices[i * 3 + 1];
+		unsigned short index2 = indices[i * 3 + 2];
+		// 三角形を構成する頂点座標ベクトルに代入
+		XMVECTOR p0 = XMLoadFloat3(&vertices[index0].pos);
+		XMVECTOR p1 = XMLoadFloat3(&vertices[index1].pos);
+		XMVECTOR p2 = XMLoadFloat3(&vertices[index2].pos);
+		// p0->p1ベクトル、p0->p2ベクトルを計算 (ベクトルの減算)
+		XMVECTOR v1 = XMVectorSubtract(p1, p0);
+		XMVECTOR v2 = XMVectorSubtract(p2, p0);
+		// 外積は両方から垂直なベクトル
+		XMVECTOR normal = XMVector3Cross(v1, v2);
+		// 正規化 (長さを1にする)
+		normal = XMVector3Normalize(normal);
+		// 求めた法線を頂点データに代入
+		XMStoreFloat3(&vertices[index0].normal, normal);
+		XMStoreFloat3(&vertices[index1].normal, normal);
+		XMStoreFloat3(&vertices[index2].normal, normal);
+		int a = 0;
+	}
 
 
 	// 頂点データ全体のサイズ = 頂点データ一つ分のサイズ * 頂点データの要素数
@@ -538,33 +619,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		&dsvDesc,
 		dsvHeap->GetCPUDescriptorHandleForHeapStart());
 
-	// インデックスデータ
-	uint16_t indices[] =
-	{
-		// 前
-		0, 1, 2, // 三角形1つ目
-		2, 1, 3, // 三角形2つ目
 
-		// 後
-		6, 7, 4, // 三角形1つ目
-		4, 7, 5, // 三角形2つ目
-
-		// 左
-		8, 9, 10, // 三角形1つ目
-		10, 9, 11, // 三角形2つ目
-
-		// 右
-		14, 15, 12, // 三角形1つ目
-		12, 15, 13, // 三角形2つ目
-
-		// 下
-		18, 19, 16, // 三角形1つ目
-		16, 19, 17, // 三角形2つ目
-
-		//// 上
-		20, 21, 22, // 三角形1つ目
-		22, 21, 23, // 三角形2つ目
-	};
 
 	// インデックスデータ全体のサイズ
 	UINT sizeIB = static_cast<UINT>(sizeof(uint16_t) * _countof(indices));
@@ -770,8 +825,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		if (keys->IsDown(DIK_UP) || keys->IsDown(DIK_DOWN) || keys->IsDown(DIK_RIGHT) || keys->IsDown(DIK_LEFT))
 		{
 			// 座標移動 (Z座標)
-			if (keys->IsDown(DIK_UP))	 position.z += 1.0f;
-			if (keys->IsDown(DIK_DOWN))  position.z -= 1.0f;
+			if (keys->IsDown(DIK_UP))	 position.y += 1.0f;
+			if (keys->IsDown(DIK_DOWN))  position.y -= 1.0f;
 			if (keys->IsDown(DIK_RIGHT)) position.x += 1.0f;
 			if (keys->IsDown(DIK_LEFT))  position.x -= 1.0f;
 		}
