@@ -336,6 +336,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	// パイプラインにルートシグネチャをセット
 	pipelineDesc.pRootSignature = rootSignature;
 
+	// デプスステンシルステートの設定
+	pipelineDesc.DepthStencilState.DepthEnable = true; // 深度テスト
+	pipelineDesc.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL; // 書き込み許可
+	pipelineDesc.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS; // 小さければ合格
+	pipelineDesc.DSVFormat = DXGI_FORMAT_D32_FLOAT; // 深度フォーマット
+
+
 	// パイプランステートの生成
 	ID3D12PipelineState* pipelineState = nullptr;
 	Result(dx->myDvc.Device()->CreateGraphicsPipelineState(&pipelineDesc, IID_PPV_ARGS(&pipelineState)));
@@ -519,12 +526,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		depthBuff,
 		&dsvDesc,
 		dsvHeap->GetCPUDescriptorHandleForHeapStart());
-
-	// デプスステンシルステートの設定
-	pipelineDesc.DepthStencilState.DepthEnable = true; // 深度テスト
-	pipelineDesc.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL; // 書き込み許可
-	pipelineDesc.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS; // 小さければ合格
-	pipelineDesc.DSVFormat = DXGI_FORMAT_D32_FLOAT; // 深度フォーマット
 
 	// インデックスデータ
 	uint16_t indices[] =
