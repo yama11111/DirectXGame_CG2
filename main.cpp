@@ -874,6 +874,23 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	//読み込んだディフューズテクスチャを SRGB として扱う
 	metadata.format = MakeSRGB(metadata.format);
 
+	TexMetadata metadata2{};
+	ScratchImage scratchImg2{};
+	// WICテクスチャのロード
+	Result(LoadFromWICFile(L"Resources/reimu.png", WIC_FLAGS_NONE, &metadata2, scratchImg2));
+
+	ScratchImage mipChain2{};
+	// ミップマップ生成
+	if (Result(GenerateMipMaps(scratchImg2.GetImages(), scratchImg2.GetImageCount(), scratchImg2.GetMetadata(),
+		TEX_FILTER_DEFAULT, 0, mipChain2)))
+	{
+		scratchImg2 = std::move(mipChain2);
+		metadata2 = scratchImg2.GetMetadata();
+	}
+
+	//読み込んだディフューズテクスチャを SRGB として扱う
+	metadata2.format = MakeSRGB(metadata2.format);
+
 	// ヒープ設定
 	D3D12_HEAP_PROPERTIES textureHeapProp{};
 	textureHeapProp.Type = D3D12_HEAP_TYPE_CUSTOM;
@@ -907,6 +924,25 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		nullptr,
 		IID_PPV_ARGS(&texBuff)));
 
+	D3D12_RESOURCE_DESC textureResourceDesc2{};
+	textureResourceDesc2.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+	textureResourceDesc2.Format = metadata2.format;
+	textureResourceDesc2.Width = metadata2.width;   // 幅
+	textureResourceDesc2.Height = (UINT)metadata2.height; // 高さ
+	textureResourceDesc2.DepthOrArraySize = (UINT16)metadata2.arraySize;
+	textureResourceDesc2.MipLevels = (UINT16)metadata2.mipLevels;
+	textureResourceDesc2.SampleDesc.Count = 1;
+
+	// テクスチャバッファの生成
+	ID3D12Resource* texBuff2 = nullptr;
+	Result(dx->myDvc.Device()->CreateCommittedResource(
+		&textureHeapProp,
+		D3D12_HEAP_FLAG_NONE,
+		&textureResourceDesc2,
+		D3D12_RESOURCE_STATE_GENERIC_READ,
+		nullptr,
+		IID_PPV_ARGS(&texBuff2)));
+
 	// テクスチャバッファにデータ転送
 	//Result(texBuff->WriteToSubresource(
 	//	0,
@@ -924,6 +960,20 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		const Image* img = scratchImg.GetImage(i, 0, 0);
 		// テクスチャバッファにデータ転送
 		Result(texBuff->WriteToSubresource(
+			(UINT)i,
+			nullptr, // 全領域へコピー
+			img->pixels, // 元データアドレス
+			(UINT)img->rowPitch, // 1ラインサイズ
+			(UINT)img->slicePitch // 1枚サイズ
+		));
+	}
+
+	for (size_t i = 0; i < metadata2.mipLevels; i++)
+	{
+		// ミップマップを指定してイメージ取得
+		const Image* img = scratchImg2.GetImage(i, 0, 0);
+		// テクスチャバッファにデータ転送
+		Result(texBuff2->WriteToSubresource(
 			(UINT)i,
 			nullptr, // 全領域へコピー
 			img->pixels, // 元データアドレス
@@ -966,7 +1016,23 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	// ハンドルの指す位置にシェーダーリソースビュー作成
 	dx->myDvc.Device()->CreateShaderResourceView(texBuff, &srvDesc, srvHandle);
 
+	// 一つハンドルを進める
+	UINT incrementSize = dx->myDvc.Device()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	srvHandle.ptr += incrementSize;
+
+	// シェーダーリソースビュー設定
+	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc2{};
+	srvDesc2.Format = textureResourceDesc2.Format;
+	srvDesc2.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	srvDesc2.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D; // 2Dテクスチャ
+	srvDesc2.Texture2D.MipLevels = textureResourceDesc2.MipLevels;
+
+	// ハンドルの指す位置にシェーダーリソースビュー作成
+	dx->myDvc.Device()->CreateShaderResourceView(texBuff2, &srvDesc2, srvHandle);
+
 	// ------------------------------ //
+
+	bool flag = false;
 
 	// ゲームループ
 	while (true)
@@ -998,6 +1064,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 			if (keys->IsDown(DIK_DOWN))  object3ds[0].position.y -= 1.0f;
 			if (keys->IsDown(DIK_RIGHT)) object3ds[0].position.x += 1.0f;
 			if (keys->IsDown(DIK_LEFT))  object3ds[0].position.x -= 1.0f;
+		}
+
+		if (keys->IsTrigger(DIK_SPACE))
+		{
+			if (flag) flag = false;
+			else flag = true;
 		}
 
 		//// ワールド変換行列
@@ -1092,6 +1164,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		D3D12_GPU_DESCRIPTOR_HANDLE srvGpuHandle = srvHeap->GetGPUDescriptorHandleForHeapStart();
 		// SRVヒープの先頭にあるSRVをルートパラメータ1番に設定
 		dx->myCmdList.CommandList()->SetGraphicsRootDescriptorTable(1, srvGpuHandle);
+		// 2枚目を指し示すようにしたSRVのハンドルをルートパラメータ1番に設定
+		srvGpuHandle.ptr += incrementSize;
+		if (flag) dx->myCmdList.CommandList()->SetGraphicsRootDescriptorTable(1, srvGpuHandle);
 
 		//// 定数バッファビュー(CBV)の設定コマンド (0)
 		//dx->myCmdList.CommandList()->SetGraphicsRootConstantBufferView(2, constBuffTransform0->GetGPUVirtualAddress());
